@@ -4,6 +4,11 @@ import CheckerBoard from '../../components/CheckerBoard/CheckerBoard';
 import ScoreBoard from '../../components/ScoreBoard/ScoreBoard';
 import { useState } from 'react';
 
+/*
+    Rendering the checkerboard depending on whether 
+    is a remote or local game.
+*/
+
 const GameBox = ({ type }) => {
     const [userScores, setUserScores] = useState({});
     const [resetState, setResetState] = useState("");

@@ -5,11 +5,9 @@ import MultiRemote from './components/MultiRemote/MultiRemote';
 import GameBox from './containers/GameBox/GameBox';
 import { initSocket } from './socket.io/socket';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import { useState } from 'react';
 initSocket();
 
 function App() {
-  const [user, setUser] = useState({});
 
   return (
     <Router>

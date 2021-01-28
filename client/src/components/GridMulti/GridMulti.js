@@ -17,7 +17,7 @@ import Chat from '../Chat/Chat';
 
 // decide functionality for user2 (should it be same component or different one?)
 let gridInstance;
-const swapPlayers = {
+const playerTurns = {
     user1: 'user2',
     user2: 'user1'
 };
@@ -91,7 +91,7 @@ const GridMulti = ({ onSetUserScores, resetState, setResetState, setPlayerStats,
                 playWinSound();
                 setCurrentPlayerSymbol('user1');
                 setPlayerStats({ ...usersObj });
-                return setWinner(usersObj[swapPlayers[currentPlayer]]);
+                return setWinner(usersObj[playerTurns[currentPlayer]]);
             }
         });
 
@@ -130,27 +130,27 @@ const GridMulti = ({ onSetUserScores, resetState, setResetState, setPlayerStats,
         gridInstance.calculateScore();
         if (gridInstance.captures.user1.score === 12 || gridInstance.captures.user2.score === 12) {
             usersObj[currentPlayer].wins += 1;
-            usersObj[swapPlayers[currentPlayer]].losses += 1;
+            usersObj[playerTurns[currentPlayer]].losses += 1;
             increaseWinOrLosses(usersObj[currentPlayer].userName, 'wins', usersObj[currentPlayer].wins);
-            increaseWinOrLosses(usersObj[swapPlayers[currentPlayer]].userName, 'losses', usersObj[swapPlayers[currentPlayer]].losses);
+            increaseWinOrLosses(usersObj[playerTurns[currentPlayer]].userName, 'losses', usersObj[playerTurns[currentPlayer]].losses);
             playWinSound();
             setCurrentPlayerSymbol('user1');
             setPlayerStats({ ...usersObj });
-            socket.emit('i-moved', { currentPlayer: swapPlayers[currentPlayer], room: room, currentPlayerSymbolIncoming: swapPlayers[currentPlayerSymbol] });
+            socket.emit('i-moved', { currentPlayer: playerTurns[currentPlayer], room: room, currentPlayerSymbolIncoming: playerTurns[currentPlayerSymbol] });
             return setWinner(usersObj[currentPlayer]);
         }
         if (moveObj.moveType === 'capturing-double') {
             setSelectedPiece(moveObj.targetSquare.piece);
             playMultiCaptureSound();  // Play the board sound after a move is performed
         } else if (moveObj.moveType === 'basic') {
-            socket.emit('i-moved', { currentPlayer: swapPlayers[currentPlayer], room: room, currentPlayerSymbolIncoming: swapPlayers[currentPlayerSymbol] });
-            setCurrentPlayerSymbol(swapPlayers[currentPlayerSymbol]);
+            socket.emit('i-moved', { currentPlayer: playerTurns[currentPlayer], room: room, currentPlayerSymbolIncoming: playerTurns[currentPlayerSymbol] });
+            setCurrentPlayerSymbol(playerTurns[currentPlayerSymbol]);
             setSelectedPiece('');
             setCurrentPlayer('');
             playMoveSound();  // Play the board sound after a move is performed
         } else { // single capture
-            socket.emit('i-moved', { currentPlayer: swapPlayers[currentPlayer], room: room, currentPlayerSymbolIncoming: swapPlayers[currentPlayerSymbol] });
-            setCurrentPlayerSymbol(swapPlayers[currentPlayerSymbol]);
+            socket.emit('i-moved', { currentPlayer: playerTurns[currentPlayer], room: room, currentPlayerSymbolIncoming: playerTurns[currentPlayerSymbol] });
+            setCurrentPlayerSymbol(playerTurns[currentPlayerSymbol]);
             setSelectedPiece('');
             setCurrentPlayer('');
             playCaptureSound();  // Play the board sound after a move is performed

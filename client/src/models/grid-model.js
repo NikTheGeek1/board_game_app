@@ -1,5 +1,11 @@
 import Square from './square-model';
 
+
+/*
+    This class is the 'back-end' grid which holds the logic
+    of the 'front-end' Grid component (where game elements are being 
+    rendered on the screen).
+*/
 class GridClass {
     constructor(columns, rows) {
         this.columns = columns;
@@ -11,6 +17,10 @@ class GridClass {
         };
     }
 
+    /*
+        Assigns inputted users' name in the 
+        captures object.
+    */
     addUserNames(user1, user2) {
         this.captures = {
             user1: { score: 0, userName: user1 },
@@ -18,6 +28,9 @@ class GridClass {
         };
     }
 
+    /*
+        Current game score calculator.
+    */
     calculateScore() {
         let user1Score = 0;
         let user2Score = 0;
@@ -36,6 +49,12 @@ class GridClass {
         this.captures['user2'].score = 12 - user2Score;
     }
 
+    /*
+        When it is a user's turn and they selected a piece
+        and a valid move, then this function calculates
+        the move type (e.g., basic/double/capture) and moves the piece
+        to the target location.
+    */
     movePiece(targetSquare, selectedPiece) {
         // swapping selected piece from its initial location with the target square location
         const targetSqColumn = targetSquare.location.column;
@@ -43,10 +62,10 @@ class GridClass {
         const selectedPieceColumn = selectedPiece.location.column;
         const selectedPieceRow = selectedPiece.location.row;
 
-        // was capturing move?
+        // Deciding if we did a capturing move
         const wasCapturingMove = Math.abs(targetSqColumn - selectedPieceColumn) === 2 && Math.abs(targetSqRow - selectedPieceRow) === 2;
-
-        // deciding if we did a capturing move
+        
+        // Calculates whether or not there is a legal capture move.
         this.shouldCapturePiece(targetSquare, selectedPiece);
 
         this.gridState[targetSqRow][targetSqColumn].piece = { ...this.gridState[selectedPieceRow][selectedPieceColumn].piece };
@@ -60,7 +79,8 @@ class GridClass {
         this.callPieceLegalMoves('basic');
         this.callPieceLegalMoves('capturing');
 
-        // if it was capturing move, is there another captu. move?
+        // Passes back to the 'front-end' the information
+        // of whether the move was a basic/double/capturing move. 
         if (wasCapturingMove && this.gridState[targetSqRow][targetSqColumn].piece.capturingLegalMoves.length) {
             return { moveType: 'capturing-double', targetSquare: this.gridState[targetSqRow][targetSqColumn] };
         }
@@ -70,6 +90,7 @@ class GridClass {
         return { moveType: 'basic', targetSquare: this.gridState[targetSqRow][targetSqColumn] }
     }
 
+    // This function decides whether the player did a capturing move.
     shouldCapturePiece(targetSquare, selectedPiece) {
         const selectedPieceColumn = selectedPiece.location.column;
         const selectedPieceRow = selectedPiece.location.row;
@@ -88,7 +109,10 @@ class GridClass {
             this.gridState[opponentSq.location.row][opponentSq.location.column].piece = false;
         }
     }
-
+    /*
+        After the grid is being passed around from client to server via socket.io,
+        this function ensures that the grid has its correct form/state.
+    */
     createState(grid) {
         const gridState = this.rows.map(row => {
             return this.columns.map(column => {
@@ -107,11 +131,11 @@ class GridClass {
         this.callPieceLegalMoves('capturing');
     }
 
+    /* 
+        This function initialises the state of the grid. The initial state
+        is when all the pieces are on their appropriate squares.
+    */
     initialiseState() {
-        /* 
-            This function initialises the state of the grid. The initial state
-            is when all the pieces are on their appropriate squares.
-        */
         const grid = this.rows.map(row => {
             return this.columns.map(column => {
                 // decide if that square (i.e., combination column, row) has a piece
@@ -131,12 +155,12 @@ class GridClass {
         this.callPieceLegalMoves('capturing');
     }
 
+    /* 
+        Helper function to help us put the pieces on the correct square.
+        There are two different patterns with regards to how the pieces display on the screen.
+        These following if statements are responsible for these patterns.
+    */
     _hasPieceInitialState(location) {
-        /* 
-            Helper function to help us put the pieces on the correct square.
-            There are two different patterns with regards to how the pieces display on the screen.
-            These following if statements are responsible for these patterns.
-        */
         if ((location.column % 2 !== 0) && (location.row % 2 === 0) && (location.row < 3 || location.row > 4)) {
             return true;
         }
@@ -146,15 +170,15 @@ class GridClass {
         return false;
     }
 
+    /* 
+        This function has just two for loops
+        which sole purpose is to extract out
+        one square at a time (iteration).
+        Then, if the square has a piece on it,
+        we invoking the setPieceLaglMoves function
+        which sets the piece's legal moves.
+    */
     callPieceLegalMoves(typeOfMove) {
-        /* 
-            This function has just two for loops
-            which sole purpose is to extract out
-            one square at a time (iteration).
-            Then, if the square has a piece on it,
-            we invoking the setPieceLaglMoves function
-            which sets the piece's legal moves.
-        */
         for (const row of this.gridState) {
             for (const square of row) {
                 if (square.piece) {

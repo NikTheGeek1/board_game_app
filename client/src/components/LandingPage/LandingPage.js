@@ -7,35 +7,44 @@ import logoReact from '../../static/img/ReactLogoTransparent.png';
 
 const LandingPage = () => {
     const [allUsers, setAllUsers] = useState([]);
+
     const sortUsersByWins = users => {
         const len = users.length;
-        for (let i = len - 1; i >= 0; i--) {
-            for (let j = 1; j <= i; j++) {
-                // const userScorex = users[j - 1].wins / users[j - 1].losses === Infinity ? users[j - 1].wins : users[j - 1].wins / users[j - 1].losses || 0;
-                // const userScorej = users[j].wins / users[j].losses === Infinity ? users[j].wins : users[j].wins / users[j].losses || 0;
-                const userScorex = (users[j - 1].wins - users[j - 1].losses) + (users[j - 1].wins + users[j - 1].losses) * 0.5;
-                const userScorej = (users[j].wins - users[j].losses) + (users[j].wins + users[j].losses) * 0.5;
-
-                if (userScorex < userScorej) {
-                    const temp = users[j - 1];
-                    users[j - 1] = users[j];
-                    users[j] = temp;
+        /* 
+            Sorting algorithm: this algorithm sorts all the users by score.
+            Description: This compares all existing users' score and sorts 
+            them in ascending order.
+        */
+        for (let thisUserIdx = len - 1; thisUserIdx >= 0; thisUserIdx--) {
+            for (let otherUserIdx = 1; otherUserIdx <= thisUserIdx; otherUserIdx++) {
+                const userScoreThisUser = (users[otherUserIdx - 1].wins - users[otherUserIdx - 1].losses) + (users[otherUserIdx - 1].wins + users[otherUserIdx - 1].losses) * 0.5;
+                const userScoreOtherUser = (users[otherUserIdx].wins - users[otherUserIdx].losses) + (users[otherUserIdx].wins + users[otherUserIdx].losses) * 0.5;
+                if (userScoreThisUser < userScoreOtherUser) {
+                    const temp = users[otherUserIdx - 1];
+                    users[otherUserIdx - 1] = users[otherUserIdx];
+                    users[otherUserIdx] = temp;
                 }
             }
         }
         return users;
     };
-
+    /* 
+        Fetching existing users from back-end 
+        (only once, at the end of the 1st render)
+    */
     useEffect(() => {
         fetchAll()
             .then(users => {
                 const sortedUsers = sortUsersByWins(users);
                 setAllUsers(sortedUsers);
             });
-    }, [])
+    }, []);
 
+    /*
+        Creates an array with JSX elements. 
+        Each JSX element is a row of the leading board.
+    */
     const usersJSX = allUsers.map((user, i) => {
-        // const userScore = user.wins / user.losses === Infinity ? user.wins : user.wins / user.losses || 0;
         const userScore = (user.wins - user.losses) + (user.wins + user.losses) * 0.5;
 
         return (
@@ -47,7 +56,7 @@ const LandingPage = () => {
             </div>
         );
     })
-
+    
     return (
         <main className="landing-container">
             <img src={logo} className="logo-landing" />
