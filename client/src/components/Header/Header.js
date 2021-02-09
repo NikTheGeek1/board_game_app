@@ -8,7 +8,7 @@ const Header = ({ type, setResetState }) => {
 
     return (
         <section className="header-section">
-            {type === 'locally' && <ResetBox setResetState={setResetState} />}
+            {type === 'locally' || 'single' && <ResetBox setResetState={setResetState} />}
         </section>
     );
 };

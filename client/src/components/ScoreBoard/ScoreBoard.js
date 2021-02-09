@@ -14,7 +14,7 @@ const ScoreBoard = ({ userScores, playerStats, readyToPlay }) => {
     if (readyToPlay) {
         mainJSX = (
             <section className="score-board-section">
-                <PlayerStats playerStats={playerStats} />
+                { playerStats.user2 && <PlayerStats playerStats={playerStats} /> }
                 <Title />
                 <ScoreCounter userScores={userScores} />
             </section>

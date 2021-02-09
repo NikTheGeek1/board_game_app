@@ -25,6 +25,10 @@ function App() {
           <MultiRemote />
         </Route>
 
+        <Route path="/single-player">
+          <GameBox type="single" />
+        </Route>
+
         <Route path="/play-locally">
           <GameBox type="locally" />
         </Route>

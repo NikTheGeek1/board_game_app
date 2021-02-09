@@ -68,6 +68,7 @@
 .legal-square {
     outline: 3px solid greenyellow;
     z-index: 1;
+    cursor: pointer;
 }
 
 .user1-piece {
@@ -140,4 +141,8 @@
     font-size: 80px;
     transform: translateY(-67px);
 
+}
+
+.selectable-piece {
+    cursor: pointer;
 }

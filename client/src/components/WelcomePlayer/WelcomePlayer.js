@@ -4,10 +4,13 @@ import Button from '../Button/Button';
 import { useState } from 'react';
 import UserForm from '../UserForm/UserForm';
 import logo from '../../static/img/CheckersHeader.png';
+import machineImage from '../../static/img/machine.png';
 
 const WelcomePlayer = () => {
     const [twoPlayers, setTwoPlayers] = useState(false);
     const [readyToPlay, setReadyToPlay] = useState(false);
+    const [singlePlayer, setSinglePlayer] = useState(false);
+
     const history = useHistory();
     const location = useLocation();
 
@@ -22,13 +25,21 @@ const WelcomePlayer = () => {
         setTimeout(() => {
             history.push('/play-locally', { user1: location.state, user2: backEndUser });
         }, 2000);
-    }
-    
+    };
+
+    const singlePlayerHandler = () => {
+        setSinglePlayer(true);
+        setTimeout(() => {
+            history.push('/single-player', { user1: location.state });
+        }, 2000);
+    };
+
     /* 
         Renders selection buttons (play locally / remotely)
     */
     let buttonsForOneJSX = (
         <>
+            <Button title="Single player" onSubmit={singlePlayerHandler} />
             <Button title="Multiplayer (locally)" onSubmit={() => setTwoPlayers(true)} />
             <Button title="Multiplayer (remotely)" onSubmit={() => history.push('/multi-remote', location.state)} />
         </>
@@ -72,11 +83,27 @@ const WelcomePlayer = () => {
                 </div>
             </div>
         );
+    };
+
+    let singlePlayerJSX;
+    let VSJSXSinglePlayer;
+    if (singlePlayer) {
+        buttonsForOneJSX = null;
+        buttonsForTwoJSX = null;
+        VSJSXSinglePlayer = <div className="VS">VS</div>;
+        singlePlayerJSX = (
+            <div className="welcome-div-user1">
+                <h1 className="welcome-user-name">Machine</h1>
+                <div className="machine-img-div">
+                    <img src={machineImage} alt="" />
+                </div>
+            </div>
+        );
     }
 
     return (
         <div className="welcome-container">
-            <div className="welcome-div" style={{gridAutoFlow: readyToPlay ? 'column' : 'row'}}>
+            <div className="welcome-div" style={{ gridAutoFlow: readyToPlay || singlePlayer ? 'column' : 'row' }}>
                 <div className="welcome-div-user1">
                     <h1 className="welcome-user-name">{location.state.userName}</h1>
                     <div className="trophies">
@@ -88,7 +115,9 @@ const WelcomePlayer = () => {
                     {buttonsForOneJSX}
                 </div>
                 {VSJSX}
+                {VSJSXSinglePlayer}
                 {secondPlayerJSX}
+                {singlePlayerJSX}
                 {buttonsForTwoJSX}
             </div>
             <img src={logo} className="logo-welcome-page" />

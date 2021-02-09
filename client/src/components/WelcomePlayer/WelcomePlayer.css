@@ -79,3 +79,17 @@
 .user-form-welcome {
     text-align: center;
 }
+
+.machine-img-div > img {
+    width: 450px;
+    transform: translateX(-70px);
+}
+
+
+.machine-img-div {
+    display: grid;
+    grid-template-areas: 
+    "wins losses"
+    "scorew scorel";
+    overflow: hidden;
+}

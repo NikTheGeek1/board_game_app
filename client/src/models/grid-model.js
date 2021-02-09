@@ -37,7 +37,7 @@ class GridClass {
         for (const row of this.gridState) {
             for (const square of row) {
                 if (square.piece) {
-                    if(square.piece.userTitle === 'user1') {
+                    if (square.piece.userTitle === 'user1') {
                         user1Score += 1;
                     } else {
                         user2Score += 1;
@@ -64,7 +64,7 @@ class GridClass {
 
         // Deciding if we did a capturing move
         const wasCapturingMove = Math.abs(targetSqColumn - selectedPieceColumn) === 2 && Math.abs(targetSqRow - selectedPieceRow) === 2;
-        
+
         // Calculates whether or not there is a legal capture move.
         this.shouldCapturePiece(targetSquare, selectedPiece);
 
@@ -88,6 +88,25 @@ class GridClass {
             return { moveType: 'capturing', targetSquare: this.gridState[targetSqRow][targetSqColumn] };
         }
         return { moveType: 'basic', targetSquare: this.gridState[targetSqRow][targetSqColumn] }
+    }
+
+    movePieceMachine() {
+        const selectableSquares = this._getAllSelectableSquares();
+        const pickedSquare = this._selectSelectableSquare(selectableSquares);
+        const selectedMove = this._selectLegalMoveRandomly(pickedSquare);
+        const targetSqColumn = selectedMove.location.column;
+        const targetSqRow = selectedMove.location.row;
+        const targetSquare = this.gridState[targetSqRow][targetSqColumn];
+        const typeOfMove = this.movePiece(targetSquare, pickedSquare.piece);
+        if (typeOfMove.moveType == "capturing-double") {
+            const pickedSquare2 = typeOfMove.targetSquare;
+            const selectedMove2 = this._selectDoubleCapturingMove(pickedSquare2);
+            const targetSqColumn2 = selectedMove2.location.column;
+            const targetSqRow2 = selectedMove2.location.row;
+            const targetSquare2 = this.gridState[targetSqRow2][targetSqColumn2];
+            this.movePiece(targetSquare2, pickedSquare2.piece);
+        }
+        return typeOfMove;
     }
 
     // This function decides whether the player did a capturing move.
@@ -178,6 +197,34 @@ class GridClass {
         we invoking the setPieceLaglMoves function
         which sets the piece's legal moves.
     */
+
+    _getAllSelectableSquares() {
+        const selectableSquares = [];
+        for (const row of this.gridState) {
+            for (const square of row) {
+                if (square.piece && square.piece.userTitle == "user2" && square.piece.legalMoves.length) {
+                    selectableSquares.push(square);
+                }
+            }
+        }
+        return selectableSquares;
+    }
+
+    _selectSelectableSquare(selectableSquares) {
+        const pieceIdx = Math.floor(Math.random() * selectableSquares.length);
+        return selectableSquares[pieceIdx];
+    }
+
+    _selectLegalMoveRandomly(square) {
+        const moveIdx = Math.floor(Math.random() * square.piece.legalMoves.length);
+        return square.piece.legalMoves[moveIdx];
+    }
+
+    _selectDoubleCapturingMove(square) {
+        const moveIdx = Math.floor(Math.random() * square.piece.capturingLegalMoves.length);
+        return square.piece.capturingLegalMoves[moveIdx];
+    }
+
     callPieceLegalMoves(typeOfMove) {
         for (const row of this.gridState) {
             for (const square of row) {

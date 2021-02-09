@@ -32,6 +32,7 @@ export const pieceAsJSX = (square, currentPlayer, selectedPiece, selectPieceHand
         pieceClasses += colorClass;
         if (piece.userTitle === currentPlayer && piece.legalMoves.length) {
             const selectedClass = isPieceSelectedClasses(piece, selectedPiece);
+            pieceClasses += ' selectable-piece ';
             pieceClasses += selectedClass;
             pieceJSX = <div className={pieceClasses} onClick={() => selectPieceHandler(piece)} > </div>;
         } else {
