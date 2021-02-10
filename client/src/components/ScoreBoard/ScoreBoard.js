@@ -8,6 +8,7 @@ const ScoreBoard = ({ userScores, playerStats, readyToPlay }) => {
     let mainJSX = (
         <section className="score-board-section">
             <Title />
+            <h1>PLEASE WAIT FOR ANOTHER PLAYER TO JOIN</h1>
             <div className="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
         </section>
     );
